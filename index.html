@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OMAX Calculator Suite</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; color:#222; }
+    h1 { color: #333; margin-bottom: 12px; }
+    .tabs { margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap; }
+    .tab-button { padding: 8px 12px; cursor: pointer; border: 1px solid #ccc; background:#f7f7f7; border-radius:6px; }
+    .tab-button.active { background:#e9e9e9; font-weight:bold; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .section-title { margin:8px 0 12px; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:8px; max-width:520px; }
+    .input-row { display:flex; align-items:center; gap:8px; }
+    .input-row label { flex: 0 0 160px; }
+    .input-row input { flex: 1 1 auto; padding:6px; border:1px solid #ccc; border-radius:6px; }
+    .btn-row { display:flex; gap:8px; margin-top:8px; }
+    button { padding:6px 10px; border:1px solid #ccc; background:#f7f7f7; border-radius:6px; cursor:pointer; }
+    button:hover { background:#eee; }
+    .result { margin-top:10px; font-weight:bold; color:#0b67ff; }
+    .error { color:#c62828; font-weight:bold; }
+    .speed-output { margin-top:12px; display:grid; gap:6px; max-width:420px; }
+    .speed-item { display:flex; justify-content:space-between; padding:6px 8px; border:1px solid #eee; border-radius:6px; background:#fafafa; }
+    #history { margin-top:10px; font-size:0.9em; color:#555; max-width:520px; }
+  </style>
+</head>
+<body>
+  <h1>OMAX 계산기 모음</h1>
+
+  <!-- 탭 버튼 -->
+  <div class="tabs">
+    <button class="tab-button active" data-tab="calc">일반 계산기</button>
+    <button class="tab-button" data-tab="weight">무게 계산기</button>
+    <button class="tab-button" data-tab="speed">가공속도 계산기</button>
+    <button class="tab-button" data-tab="pressure">압력 변환기</button>
+  </div>
+
+  <!-- 일반 계산기 -->
+  <div id="calc" class="tab-content active">
+    <h2 class="section-title">일반 계산기</h2>
+    <div class="input-row">
+      <label for="display">수식 입력</label>
+      <input id="display" type="text" placeholder="예: (12+3)*4 / 5">
+    </div>
+    <div class="btn-row">
+      <button id="btnCalc">= 계산</button>
+      <button id="btnClear">C 지우기</button>
+    </div>
+    <div id="history"></div>
+  </div>
+
+  <!-- 무게 계산기 -->
+  <div id="weight" class="tab-content">
+    <h2 class="section-title">무게 계산기</h2>
+    <div class="grid">
+      <div class="input-row"><label for="width">가로 (mm)</label><input id="width" type="number"></div>
+      <div class="input-row"><label for="height">세로 (mm)</label><input id="height" type="number"></div>
+      <div class="input-row"><label for="thickness">두께 (mm)</label><input id="thickness" type="number"></div>
+      <div class="input-row"><label for="density">밀도 (g/cm³)</label><input id="density" type="number"></div>
+    </div>
+    <div class="btn-row"><button id="weightBtn">무게 계산</button></div>
+    <div id="weightResult" class="result"></div>
+  </div>
+
+  <!-- 가공속도 계산기 -->
+  <div id="speed" class="tab-content">
+    <h2 class="section-title">가공속도 계산기</h2>
+    <!-- 입력 필드들 -->
+    <div class="grid">
+      <div class="input-row"><label for="materialCoeff">가공계수 (k)</label><input id="materialCoeff" type="number" value="80.8"></div>
+      <div class="input-row"><label for="materialThickness">두께 (mm)</label><input id="materialThickness" type="number" value="10"></div>
+      <div class="input-row"><label for="pumpPressure">펌프 압력 (bar)</label><input id="pumpPressure" type="number" value="3440"></div>
+      <div class="input-row"><label for="orifice">오리피스 (mm)</label><input id="orifice" type="number" value="0.3556"></div>
+      <div class="input-row"><label for="nozzle">노즐 (mm)</label><input id="nozzle" type="number" value="1.0668"></div>
+      <div class="input-row"><label for="abrasiveFlow">연마제 (g/min)</label><input id="abrasiveFlow" type="number" value="640"></div>
+      <div class="input-row"><label for="abrasiveGrit">입도 (grit)</label><input id="abrasiveGrit" type="number" value="80"></div>
+    </div>
+    <!-- 결과 출력 -->
+    <div class="speed-output">
+      <div class="speed-item"><span>Q1 속도</span><span id="q1Speed">-</span></div>
+      <div class="speed-item"><span>Q2 속도</span><span id="q2Speed">-</span></div>
+      <div class="speed-item"><span>Q3 속도</span><span id="q3Speed">-</span></div>
+      <div class="speed-item"><span>Q4 속도</span><span id="q4Speed">-</span></div>
+      <div class="speed-item"><span>Q5 속도</span><span id="q5Speed">-</span></div>
+    </div>
+  </div>
+
+  <!-- 압력 변환기 -->
+  <div id="pressure" class="tab-content">
+    <h2 class="section-title">압력 변환기</h2>
+    <div class="grid">
+      <div class="input-row">
+        <label for="pressureInput">압력 값</label>
+        <input id="pressureInput" type="number" step="0.01" placeholder="BAR 또는 PSI 입력">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button id="btnBarToPsi">BAR → PSI</button>
+      <button id="btnPsiToBar">PSI → BAR</button>
+    </div>
+    <!-- 변환 결과 표시 칸 -->
+    <div id="pressureResult" class="result" style="border:1px solid #ccc; padding:10px; margin-top:10px; background:#f9f9f9; border-radius:6px;">
+      변환 결과가 여기에 표시됩니다.
+    </div>
+  </div>
+
+
+
+
+  <script>
+ // ===== 공통 유틸 =====
+function safeNumber(val, def) {
+  const n = typeof val === "number" ? val : parseFloat(val);
+  return Number.isFinite(n) ? n : def;
+}
+function debounce(fn, delay = 150) {
+  let t = null;
+  return (...args) => {
+    if (t) clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
+  };
+}
+
+// ===== 탭 전환 =====
+function initTabs() {
+  const buttons = document.querySelectorAll('.tab-button');
+  const contents = document.querySelectorAll('.tab-content');
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const tabId = button.getAttribute('data-tab');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      contents.forEach(content => content.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+}
+
+ // ===== 일반 계산기 =====
+function initBasicCalculator() {
+  const display = document.getElementById("display");
+  const history = document.getElementById("history");
+  const btnCalc = document.getElementById("btnCalc");
+  const btnClear = document.getElementById("btnClear");
+  if (!display || !history || !btnCalc || !btnClear) return;
+
+  function calculate() {
+    try {
+      const expression = display.value || "";
+      const result = eval(expression); // 단순 산술만 사용 권장
+      display.value = result;
+      const p = document.createElement("p");
+      p.textContent = expression + " = " + result;
+      history.appendChild(p);
+    } catch (e) {
+      display.value = "";
+      const p = document.createElement("p");
+      p.innerHTML = '<span class="error">입력 오류: 수식을 확인하세요</span>';
+      history.appendChild(p);
+    }
+  }
+  function clearDisplay() {
+    display.value = "";
+  }
+
+  btnCalc.addEventListener("click", calculate);
+  btnClear.addEventListener("click", clearDisplay);
+  display.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") { event.preventDefault(); calculate(); }
+    if (event.key === "Escape") { event.preventDefault(); clearDisplay(); }
+  });
+}
+
+ // ===== 무게 계산기 =====
+function initWeightCalculator() {
+  const widthEl = document.getElementById("width");
+  const heightEl = document.getElementById("height");
+  const thicknessEl = document.getElementById("thickness");
+  const densityEl = document.getElementById("density");
+  const resultEl = document.getElementById("weightResult");
+  const button = document.getElementById("weightBtn");
+  if (!widthEl || !heightEl || !thicknessEl || !densityEl || !resultEl || !button) return;
+
+  function calculateWeight() {
+    const width = safeNumber(widthEl.value, NaN);
+    const height = safeNumber(heightEl.value, NaN);
+    const thickness = safeNumber(thicknessEl.value, NaN);
+    const density = safeNumber(densityEl.value, NaN);
+
+    if ([width, height, thickness, density].some(v => !Number.isFinite(v))) {
+      resultEl.textContent = "입력 오류";
+      resultEl.classList.add("error");
+      return;
+    }
+    resultEl.classList.remove("error");
+
+    // mm 단위를 cm로 변환 후 부피 계산
+    const volume_cm3 = (width / 10) * (height / 10) * (thickness / 10);
+    const weight_g = volume_cm3 * density;
+    const weight_kg = weight_g / 1000;
+
+    resultEl.textContent = weight_kg.toFixed(2) + " kg";
+  }
+
+  button.addEventListener("click", calculateWeight);
+}
+
+ // ===== 가공속도 계산기 =====
+function initSpeedCalculator() {
+  const QUALITY_FACTOR = {Q1:1.859, Q2:1.594, Q3:1.000, Q4:0.662, Q5:0.556};
+  const A_BASE = 16.14, ALPHA_K = 1.15, BETA_T = 1.19, P_EXP = 1.82;
+  const PRESSURE_REF_BAR = 3440, ORIFICE_REF = 0.3556, NOZZLE_REF = 1.0668, ABRASIVE_REF = 640, GRIT_REF = 80;
+
+  const materialCoeffEl = document.getElementById("materialCoeff");
+  const materialThicknessEl = document.getElementById("materialThickness");
+  const pumpPressureEl = document.getElementById("pumpPressure");
+  const orificeEl = document.getElementById("orifice");
+  const nozzleEl = document.getElementById("nozzle");
+  const abrasiveFlowEl = document.getElementById("abrasiveFlow");
+  const abrasiveGritEl = document.getElementById("abrasiveGrit");
+
+  const q1El = document.getElementById("q1Speed");
+  const q2El = document.getElementById("q2Speed");
+  const q3El = document.getElementById("q3Speed");
+  const q4El = document.getElementById("q4Speed");
+  const q5El = document.getElementById("q5Speed");
+
+  if (!materialCoeffEl || !materialThicknessEl || !pumpPressureEl ||
+      !orificeEl || !nozzleEl || !abrasiveFlowEl || !abrasiveGritEl ||
+      !q1El || !q2El || !q3El || !q4El || !q5El) return;
+
+  function estimateSpeed({
+    quality="Q3",
+    kMaterial=80.8,
+    thicknessMm=10,
+    pressureValue=PRESSURE_REF_BAR,
+    orificeMm=ORIFICE_REF,
+    nozzleMm=NOZZLE_REF,
+    abrasiveGpm=ABRASIVE_REF,
+    grit=GRIT_REF
+  } = {}) {
+    const fQuality = QUALITY_FACTOR[quality] ?? QUALITY_FACTOR.Q3;
+    const k = Math.max(safeNumber(kMaterial, 80.8), 1);
+    const t = Math.max(safeNumber(thicknessMm, 10), 0.1);
+
+    const fPressure  = Math.pow(safeNumber(pressureValue, PRESSURE_REF_BAR) / PRESSURE_REF_BAR, P_EXP);
+    const fNozzle    = Math.pow(Math.max(safeNumber(orificeMm, ORIFICE_REF), 0.05) / ORIFICE_REF, 0.20)
+                     * Math.pow(Math.max(safeNumber(nozzleMm, NOZZLE_REF), 0.2) / NOZZLE_REF, 0.20);
+    const fAbrasive  = Math.pow(Math.max(safeNumber(abrasiveGpm, ABRASIVE_REF), 1) / ABRASIVE_REF, 0.30);
+    const fGritBase  = Math.pow(GRIT_REF / Math.max(safeNumber(grit, GRIT_REF), 20), 0.12);
+    const fGrit      = Math.max(0.85, Math.min(1.15, fGritBase));
+
+    const v = A_BASE * Math.pow(k, ALPHA_K) / Math.pow(t, BETA_T)
+              * fPressure * fNozzle * fAbrasive * fGrit * fQuality;
+    return Math.round(v);
+  }
+
+  function render() {
+    const params = {
+      kMaterial: safeNumber(materialCoeffEl.value, 80.8),
+      thicknessMm: safeNumber(materialThicknessEl.value, 10),
+      pressureValue: safeNumber(pumpPressureEl.value, PRESSURE_REF_BAR),
+      orificeMm: safeNumber(orificeEl.value, ORIFICE_REF),
+      nozzleMm: safeNumber(nozzleEl.value, NOZZLE_REF),
+      abrasiveGpm: safeNumber(abrasiveFlowEl.value, ABRASIVE_REF),
+      grit: safeNumber(abrasiveGritEl.value, GRIT_REF)
+    };
+
+    q1El.textContent = estimateSpeed({ ...params, quality:"Q1" }) + " mm/min";
+    q2El.textContent = estimateSpeed({ ...params, quality:"Q2" }) + " mm/min";
+    q3El.textContent = estimateSpeed({ ...params, quality:"Q3" }) + " mm/min";
+    q4El.textContent = estimateSpeed({ ...params, quality:"Q4" }) + " mm/min";
+    q5El.textContent = estimateSpeed({ ...params, quality:"Q5" }) + " mm/min";
+  }
+
+  const renderDebounced = debounce(render, 150);
+  [materialCoeffEl, materialThicknessEl, pumpPressureEl, orificeEl, nozzleEl, abrasiveFlowEl, abrasiveGritEl]
+    .forEach(el => {
+      el.addEventListener("input", renderDebounced);
+      el.addEventListener("change", render);
+    });
+
+  render(); // 초기 계산
+}
+
+
+// ===== 압력 변환기 =====
+function initPressureConverter() {
+  const inputEl = document.getElementById("pressureInput");
+  const resultEl = document.getElementById("pressureResult");
+  const btnBarToPsi = document.getElementById("btnBarToPsi");
+  const btnPsiToBar = document.getElementById("btnPsiToBar");
+
+  if (!inputEl || !resultEl || !btnBarToPsi || !btnPsiToBar) return;
+
+  // BAR → PSI 변환
+  btnBarToPsi.addEventListener("click", () => {
+    const bar = parseFloat(inputEl.value);
+    if (isNaN(bar)) {
+      resultEl.textContent = "BAR 값을 입력하세요";
+      resultEl.classList.add("error");
+      return;
+    }
+    const psi = bar * 14.5038;
+    resultEl.classList.remove("error");
+    resultEl.innerHTML = `<strong>${bar}</strong> BAR → <strong>${psi.toFixed(2)}</strong> PSI`;
+  });
+
+  // PSI → BAR 변환
+  btnPsiToBar.addEventListener("click", () => {
+    const psi = parseFloat(inputEl.value);
+    if (isNaN(psi)) {
+      resultEl.textContent = "PSI 값을 입력하세요";
+      resultEl.classList.add("error");
+      return;
+    }
+    const bar = psi / 14.5038;
+    resultEl.classList.remove("error");
+    resultEl.innerHTML = `<strong>${psi}</strong> PSI → <strong>${bar.toFixed(2)}</strong> BAR`;
+  });
+}
+// ===== 초기화 =====
+document.addEventListener("DOMContentLoaded", () => {
+  initTabs();
+  initBasicCalculator();
+  initWeightCalculator();
+  initSpeedCalculator();
+  initPressureConverter(); // 압력 변환기 초기화
+});  </script>
+</body>
+</html>
