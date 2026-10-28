@@ -25,6 +25,16 @@
     .speed-output { margin-top:12px; display:grid; gap:6px; max-width:420px; }
     .speed-item { display:flex; justify-content:space-between; padding:6px 8px; border:1px solid #eee; border-radius:6px; background:#fafafa; }
     #history { margin-top:10px; font-size:0.9em; color:#555; max-width:520px; }
+    .input-row select { flex:1 1 auto; min-width:0; padding:6px; border:1px solid #ccc; border-radius:6px; }
+    .approx-note { color:#555; font-size:0.9rem; max-width:780px; line-height:1.65; }
+    .approx-details { margin-top:18px; }
+    .approx-table-wrap { overflow-x:auto; }
+    .approx-table { border-collapse:collapse; width:100%; max-width:780px; font-size:0.9rem; }
+    .approx-table th,.approx-table td { padding:8px 10px; border:1px solid #ddd; text-align:right; white-space:nowrap; }
+    .approx-table th:first-child,.approx-table td:first-child { text-align:left; }
+    #approx .speed-item { gap:20px; }
+    #approx .speed-item strong { text-align:right; }
+    @media(max-width:560px) { body {margin:12px;} .input-row {flex-wrap:wrap;} .input-row label{flex-basis:100%;} .input-row input,.input-row select{min-width:0; width:100%;} }
   </style>
 </head>
 <body>
@@ -36,6 +46,7 @@
     <button class="tab-button" data-tab="weight">무게 계산기</button>
     <button class="tab-button" data-tab="speed">가공속도 계산기</button>
     <button class="tab-button" data-tab="pressure">압력 변환기</button>
+    <button class="tab-button" data-tab="approx">OMAX 근사 시간</button>
   </div>
 
   <!-- 일반 계산기 -->
@@ -110,6 +121,29 @@
 
 
 
+
+  <section id="approx" class="tab-content" aria-labelledby="approxHeading">
+    <h2 id="approxHeading" class="section-title">OMAX 근사 가공시간</h2>
+    <p>기준 도면을 선택하거나 ORD 파일을 열어 Q3 가공시간을 계산합니다. 파일은 이 브라우저에서만 읽습니다.</p>
+    <p class="approx-note">보정 조건: 가공성 230 · 3,400.01bar · 오리피스 0.3302mm · 믹싱튜브 1.0620mm · 연마재 450g/min · 80Mesh · Tool offset 0.5mm · Model 4 · Intelli-PIERCE · Tilt-A-Jet 사용</p>
+    <div class="grid">
+      <div class="input-row"><label for="approxThickness">두께 (10~70mm)</label><input id="approxThickness" type="number" min="10" max="70" step="0.1" value="40"></div>
+      <div class="input-row"><label for="approxReference">기준 도면</label><select id="approxReference"></select></div>
+      <div class="input-row"><label for="approxFile">ORD 경로 파일</label><input id="approxFile" type="file" accept=".ord,.ORD,text/plain"></div>
+    </div>
+    <div class="btn-row"><button id="approxClearFile" type="button">기준 도면으로 돌아가기</button></div>
+    <p id="approxFileName" class="approx-note">기준 도면 사용 중</p>
+    <div id="approxResult" class="speed-output" aria-live="polite"></div>
+    <div id="approxWarnings" class="approx-note" aria-live="polite"></div>
+    <details><summary>Q1~Q5 이상 직선속도 보기</summary><p>가공시간 보정은 Q3만 지원합니다.</p><div id="approxSpeeds" class="speed-output"></div></details>
+    <details class="approx-details"><summary>OMAX 보고서 12건과 비교</summary>
+      <p id="approxFit"></p><div class="approx-table-wrap"><table class="approx-table"><thead><tr><th>도면</th><th>두께</th><th>OMAX (분)</th><th>근사값 (분)</th><th>오차</th></tr></thead><tbody id="approxCalibrationRows"></tbody></table></div>
+      <p class="approx-note">보정에 사용한 자료를 다시 계산한 결과입니다. 새 도면의 정확도 검증 결과가 아닙니다. ±10%는 앞으로 확인할 목표입니다.</p>
+    </details>
+  </section>
+
+  <script src="./omax-approx.js"></script>
+  <script src="./approx-ui.js"></script>
   <script>
  // ===== 공통 유틸 =====
 function safeNumber(val, def) {
