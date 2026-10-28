@@ -1,3 +1,5 @@
+> 현장용 화면은 숫자 입력 방식으로 바뀌었습니다. 현재 사용법은 [FIELD_CALCULATOR.md](FIELD_CALCULATOR.md)를 보세요. 아래 내용은 개발용 ORD 검증 모델 설명입니다.
+
 # OMAX 근사 계산 모델
 
 2026-10-28 제공된 IntelliMAX Model 4 보고서 12건과 ORD 4개를 기준으로 만든 경험적 모델입니다.

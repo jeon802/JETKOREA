@@ -1,0 +1,90 @@
+{
+  "checks": 156,
+  "maxCalibrationErrorPct": 0.3846544234394073,
+  "rows": [
+    {
+      "drawing": "01_RECT_4x90",
+      "thicknessMm": 10,
+      "reportedMin": 2.601,
+      "predictedMin": 2.611004861553659,
+      "errorPct": 0.3846544234394073
+    },
+    {
+      "drawing": "01_RECT_4x90",
+      "thicknessMm": 40,
+      "reportedMin": 17.396,
+      "predictedMin": 17.401004861553655,
+      "errorPct": 0.02877018598329874
+    },
+    {
+      "drawing": "01_RECT_4x90",
+      "thicknessMm": 70,
+      "reportedMin": 50.801,
+      "predictedMin": 50.81100486155366,
+      "errorPct": 0.019694221676070864
+    },
+    {
+      "drawing": "03_NOTCH_12x90",
+      "thicknessMm": 10,
+      "reportedMin": 2.907,
+      "predictedMin": 2.9066834564832242,
+      "errorPct": 0.010889009865008301
+    },
+    {
+      "drawing": "03_NOTCH_12x90",
+      "thicknessMm": 40,
+      "reportedMin": 23.189,
+      "predictedMin": 23.19668345648322,
+      "errorPct": 0.033134057023679796
+    },
+    {
+      "drawing": "03_NOTCH_12x90",
+      "thicknessMm": 70,
+      "reportedMin": 80.082,
+      "predictedMin": 80.08668345648324,
+      "errorPct": 0.005848326069840183
+    },
+    {
+      "drawing": "05_CIRCLE_0CORNER",
+      "thicknessMm": 10,
+      "reportedMin": 2.697,
+      "predictedMin": 2.7028890567801263,
+      "errorPct": 0.21835583166949163
+    },
+    {
+      "drawing": "05_CIRCLE_0CORNER",
+      "thicknessMm": 40,
+      "reportedMin": 13.708,
+      "predictedMin": 13.712889056780128,
+      "errorPct": 0.03566571914303787
+    },
+    {
+      "drawing": "05_CIRCLE_0CORNER",
+      "thicknessMm": 70,
+      "reportedMin": 32.309,
+      "predictedMin": 32.31288905678013,
+      "errorPct": 0.012037069485690485
+    },
+    {
+      "drawing": "07_RECT_6HOLES",
+      "thicknessMm": 10,
+      "reportedMin": 3.963,
+      "predictedMin": 3.9699175178832844,
+      "errorPct": 0.17455255824588237
+    },
+    {
+      "drawing": "07_RECT_6HOLES",
+      "thicknessMm": 40,
+      "reportedMin": 22.541,
+      "predictedMin": 22.539917517883286,
+      "errorPct": 0.004802280807039617
+    },
+    {
+      "drawing": "07_RECT_6HOLES",
+      "thicknessMm": 70,
+      "reportedMin": 79.242,
+      "predictedMin": 79.24991751788329,
+      "errorPct": 0.009991567455750158
+    }
+  ]
+}
